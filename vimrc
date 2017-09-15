@@ -21,7 +21,7 @@ Plugin 'dhruvasagar/vim-table-mode'
 Plugin 'scrooloose/nerdtree'
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'Valloric/YouCompleteMe'
-
+Plugin 'purescript-contrib/purescript-vim'
 Bundle 'ervandew/supertab'
 Plugin 'justinj/vim-react-snippets'
 Plugin 'SirVer/ultisnips'
@@ -31,6 +31,7 @@ Plugin 'elmcast/elm-vim'
 Plugin 'morhetz/gruvbox'
 Plugin 'tpope/vim-pathogen'
 Plugin 'vim-syntastic/syntastic'
+Plugin 'tpope/vim-repeat'
 
 
 call vundle#end()            " required
@@ -43,16 +44,15 @@ filetype plugin on
 set shellslash
 set grepprg=grep\ -nH\ $*
 set tw=80
-set tabstop=2                   "A tab is 8 spaces
+set tabstop=4                   "A tab is 8 spaces
 set expandtab                   "Always uses spaces instead of tabs
-set softtabstop=2               "Insert 4 spaces when tab is pressed
-set shiftwidth=2                "An indent is 4 spaces
+set softtabstop=4               "Insert 4 spaces when tab is pressed
+set shiftwidth=4                "An indent is 4 spaces
 set smarttab                    "Indent instead of tab at start of line
 set shiftround                  "Round spaces to nearest shiftwidth multiple
 set nojoinspaces                "Don't convert spaces to tabs
 set nofoldenable
 syntax on
-set backspace=2
 
 set clipboard=unnamed
 set t_Co=256
@@ -68,8 +68,8 @@ set relativenumber
 set guioptions-=r 
 "set colorcolumn=80
 set autoindent
-set tabstop=2
-set shiftwidth=2
+set tabstop=4
+set shiftwidth=4
 set expandtab
 function! g:ToggleColorColumn()
   if &colorcolumn != ''
@@ -109,7 +109,7 @@ let g:syntastic_check_on_wq = 0
 
 "compiler
 au FileType markdown nnoremap <buffer> <silent> <leader>y  :!pandoc % -o %<.pdf --template='%:p:h'/md.latex --listings<CR>
-au FileType markdown nnoremap <buffer> <silent> <leader>[  :!pandoc % -o %<.pdf --listings<CR>
+au FileType markdown nnoremap <buffer> <silent> <leader>[  :!pandoc % -o %<.pdf --listings --latex-engine=xelatex<CR>
 au FileType markdown nnoremap <buffer> <silent> <leader>å  :!pandoc -t beamer -s %<.md -o %<.pdf -V colortheme:seagull -V lang=swedish<CR>
 au FileType haskell nnoremap <buffer> <F1> :HdevtoolsType<CR>
 au FileType haskell nnoremap <buffer> <silent> <F2> :HdevtoolsClear<CR>
