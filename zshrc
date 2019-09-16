@@ -1,13 +1,10 @@
-# Created by newuser for 5.0.5
 autoload -U promptinit && promptinit
 #promptinit
 autoload -U colors && colors
 bindkey -v
 
-source $HOME/.aliases
 setopt prompt_subst
 
-export PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:/usr/local/bin:$PATH
 # Set the colors to your liking
 local vi_normal_marker="%{$fg[green]%}%BN%b%{$reset_color%}"
 local vi_insert_marker="%{$fg[red]%}%BI%b%{$reset_color%}"
@@ -20,14 +17,41 @@ vi_mode_indicator () {
     (*)          echo $vi_unknown_marker ;;
   esac
 }
+export PATH=/home/marccoquand/.dotnet/tools:$PATH
 
+export NNN_TMPFILE="/tmp/nnn"
+
+n()
+{
+        nnn "$@"
+
+        if [ -f $NNN_TMPFILE ]; then
+                . $NNN_TMPFILE
+                rm $NNN_TMPFILE
+        fi
+}
 # Reset mode-marker and prompt whenever the keymap changes
-function zle-line-init zle-keymap-select {
-  vi_mode="$(vi_mode_indicator)"
-  zle reset-prompt
+# function zle-line-init zle-keymap-select {
+  # vi_mode="$(vi_mode_indicator)"
+  # zle reset-prompt
+# }
+# zle -N zle-line-init
+# zle -N zle-keymap-select
+
+zle-keymap-select () {
+if [ $KEYMAP = vicmd ]; then
+    printf "\033[2 q"
+else
+    printf "\033[6 q"
+fi
+}
+zle -N zle-keymap-select
+zle-line-init () {
+zle -K viins
+printf "\033[6 q"
 }
 zle -N zle-line-init
-zle -N zle-keymap-select
+bindkey -v
 
 # Multiline-prompts don't quite work with reset-prompt; we work around this by
 # printing the first line(s) via a precmd which is executed before the prompt
@@ -43,33 +67,38 @@ function prompt_branch {
 
 function prompt_git {
   if git rev-parse --git-dir > /dev/null 2>&1; then
-    echo '»' 
+    echo '∙ ' 
   else 
-    echo '›' 
+    echo '' 
   fi
 }
 
+alias open='xdg-open'
+alias vim='nvim'
+function gc() {
+    git add .
+    if [ "$1" != "" ]
+    then
+        git commit -m "$1"
+    else
+        git commit -m update 
+    fi
+}
+function gp() {
+    git push origin $1
+}
 
-PROMPT=' %{$fg[green]%}$(prompt_git)%{$reset_color%}%}  %{$fg[blue]%}%~%{$reset_color%} '
 
-case $TERM in
-    (*xterm* | rxvt)
-  function precmd {
-    print -Pn "\e]0;zsh%L %(1j,%j job%(2j|s|); ,)%~\a"
-  }
-  function preexec {
-    printf "\033]0;%s\a" "$1"
-  }
-  ;;
-esac
-BASE16_SCHEME="default"
-BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
-[[ -s $BASE16_SHELL  ]] && source $BASE16_SHELL
+PROMPT='[%{$fg_bold[white]%}$(prompt_git)%{$reset_color%}%{$fg[blue]%}%~%{$reset_color%}] '
 
-alias sshumu="ssh id14mcd@itchy.cs.umu.se"
-scpumu () {scp $1 id14mcd@itchy.cs.umu.se:$2}
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export KEYTIMEOUT=1
 
-export PATH=$PATH:/Users/marccoquand/Library/Android/sdk/platform-tools
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/home/marccoquand/.sdkman"
+[[ -s "/home/marccoquand/.sdkman/bin/sdkman-init.sh" ]] && source "/home/marccoquand/.sdkman/bin/sdkman-init.sh"
+
+# opam configuration
+test -r /home/marccoquand/.opam/opam-init/init.zsh && . /home/marccoquand/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
